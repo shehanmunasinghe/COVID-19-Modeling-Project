@@ -1,0 +1,30 @@
+########################################
+DATA:
+  COUNTRY: Sri Lanka
+  START_DATE: 2020-10-06
+  END_DATE: 2021-07-31
+
+
+
+
+########################################
+MODEL:
+  NN_MODEL: NN_1Layer_Fixed
+  ACTIVATION: relu 
+
+  PAST_N_DAYS: 1
+
+
+
+########################################
+OPTIMIZATION:
+
+    CRITERION: SmoothL1Loss
+
+    OPTIMIZER: Adam
+    LR: 1e-5
+
+    NUM_EPOCHS: 10000
+
+    
+
