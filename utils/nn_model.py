@@ -256,6 +256,44 @@ class NN_3Layer(NNModel):
 
         return r
 
+class NN_4Layer(NNModel):
+    
+    def __init__(self,
+            past_n_days,
+            activation
+        ):
+        super().__init__(past_n_days,activation)
+
+        self.nn1 = SimplifiedLinear(self.past_n_days * 4, 3)
+        self.nn2 = SimplifiedLinear(3, 3) 
+        self.nn3 = SimplifiedLinear(3, 3) 
+        self.nn4 = SimplifiedLinear(3, 3) 
+
+    def forward(self, input_sird_values):
+        '''
+           input_sird_values : (past_n_days,4) 
+        '''
+        
+        features = torch.flatten(input_sird_values)
+                
+        r = self.nn1(features)
+        r = self.act_fn(r, self.activation)
+        
+        r = self.nn2(r)
+        r = self.act_fn(r, self.activation)
+
+        r = self.nn3(r)
+        r = self.act_fn(r, self.activation)
+
+        r = self.nn4(r)
+        r = self.act_fn(r, self.activation)
+
+        r = torch.clamp(r, min=0.0, max=1)
+        
+        if self.activation == 'elu':
+            r = r + 1.0
+
+        return r
 
 
 
@@ -276,5 +314,7 @@ def build_nn_model_from_config(conf):
         return NN_2Layer(past_n_days, activation)
     elif conf['MODEL']['NN_MODEL'] == 'NN_3Layer':
         return NN_3Layer(past_n_days, activation)
+    elif conf['MODEL']['NN_MODEL'] == 'NN_4Layer':
+        return NN_4Layer(past_n_days, activation)
 
     return None

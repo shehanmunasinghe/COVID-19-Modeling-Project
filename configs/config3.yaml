@@ -1,0 +1,36 @@
+########################################
+DATA:
+  COUNTRY: Sri Lanka
+  START_DATE: 2020-10-06
+  END_DATE: 2021-01-06
+
+
+
+
+########################################
+MODEL:
+  NN_MODEL: NN_4Layer
+  ACTIVATION: relu 
+
+  PAST_N_DAYS: 1
+
+
+
+########################################
+OPTIMIZATION:
+
+    CRITERION: DifferenceDailyReported
+
+    OPTIMIZER: Adam
+    LR: 1e-4
+
+    NUM_EPOCHS: 150000
+
+
+########################################
+SEEDS:
+  SEED_NUMPY:   10
+  SEED_TORCH:   11
+  SEED_PYRANDOM: 2
+
+
