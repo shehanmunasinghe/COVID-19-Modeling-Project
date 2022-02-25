@@ -9,6 +9,10 @@ from utils.loss import *
 
 import yaml
 import argparse
+import random
+import numpy as np
+
+
 
 ##################################################
 # Config
@@ -20,6 +24,11 @@ args = parser.parse_args()
 with open(args.config) as conf_file:
     conf = yaml.full_load(conf_file)
 print("Using configuration: ", conf)
+
+# Random Seeds
+np.random.seed(conf['SEEDS']['SEED_NUMPY'])
+torch.manual_seed(conf['SEEDS']['SEED_TORCH'])
+random.seed(conf['SEEDS']['SEED_PYRANDOM'])
 
 ##################################################
 # Get Real Data

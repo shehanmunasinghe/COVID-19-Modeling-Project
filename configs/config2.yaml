@@ -24,7 +24,13 @@ OPTIMIZATION:
     OPTIMIZER: Adam
     LR: 1e-4
 
-    NUM_EPOCHS: 10000
+    NUM_EPOCHS: 50000
 
-    
+
+########################################
+SEEDS:
+  SEED_NUMPY:   10
+  SEED_TORCH:   11
+  SEED_PYRANDOM: 2
+
 

@@ -26,5 +26,11 @@ OPTIMIZATION:
 
     NUM_EPOCHS: 10000
 
-    
+
+########################################
+SEEDS:
+  SEED_NUMPY:   10
+  SEED_TORCH:   11
+  SEED_PYRANDOM: 2
+
 
