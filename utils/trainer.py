@@ -81,6 +81,22 @@ def do_inference(
         out_pred = torch.stack(out_pred)
 
 
+        # x_in = dset[0:past_n_days] # (1,4)
+
+        # out_pred = []
+        # sir_params_list = []
+        # for i in range(num_days_iter):
+        #     if i==0:
+        #         x_in = dset[i:i+past_n_days]
+        #     else:
+        #         x_in = push_to_tensor_queue(x_in, pred_y)
+        #     pred_y, sir_params = model2(x_in) #(4)
+        #     pred_y = torch.unsqueeze(pred_y, 0)
+        #     out_pred.append(pred_y)
+        #     sir_params_list.append(sir_params)
+        # out_pred = torch.stack(out_pred)
+
+
         # Predicted SIR params and values
         d_sir_params = {"beta":[],"gamma":[],"delta":[]}
         d_pred_sir_values = {"S":[],"I":[],"R":[],"D":[]}
@@ -138,9 +154,22 @@ def do_inference(
         diff_gt = total_reported_gt[1:]-total_reported_gt[:-1]
 
         fig3, ax3 = plt.subplots(1)
-        fig3.suptitle('Daily reported cases')
+        fig3.suptitle('Daily Reported Cases')
         ax3.plot(diff_pred , label = "Daily Reported (Predicted)")
         ax3.plot(diff_gt , label = "Daily Reported (Real)")
+        ax3.legend()
+
+        # Plot Daily deaths (Difference of D)
+        total_dead_pred =  np.array(d_pred_sir_values["D"])
+        total_dead_gt   =  np.array(d_gt_sir_values["D"])
+    
+        daily_dead_pred = total_dead_pred[1:] - total_dead_pred[:-1]
+        daily_dead_gt = total_dead_gt[1:] - total_dead_gt[:-1]
+
+        fig3, ax3 = plt.subplots(1)
+        fig3.suptitle('Daily Deaths')
+        ax3.plot(daily_dead_pred , label = "Daily Deaths (Predicted)")
+        ax3.plot(daily_dead_gt , label = "Daily Deaths (Real)")
         ax3.legend()
         
 
