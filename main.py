@@ -61,6 +61,7 @@ criterion = build_loss_from_config(conf, population_denormalization_factor=pdnf)
 # Fitting the model 
 ##################################################
 
+print('Fitting the model..')
 try:    
     do_training(
         optimizer,
@@ -79,6 +80,7 @@ except KeyboardInterrupt:
 ### Visualize predictions of the trained model
 ##################################################
 
+print('Visualizing..')
 do_inference(
     forward_model, 
     trainset,

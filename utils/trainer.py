@@ -60,42 +60,48 @@ def do_training(
 
 def do_inference(
     model2, 
-    dset,
+    dataset,
     num_days_iter,
     past_n_days
     ):
     with torch.no_grad():
         # Run the model forward pass
 
-        x_in = dset[0] # (1,4)
-
-        out_pred = []
-        sir_params_list = []
-        for i in range(num_days_iter):
-            pred_y, sir_params = model2(x_in) #(4)
-            pred_y = torch.unsqueeze(pred_y, 0)
-            x_in = pred_y
-            out_pred.append(pred_y)
-            sir_params_list.append(sir_params)
-            # x_in = pred_y
-        out_pred = torch.stack(out_pred)
-
-
-        # x_in = dset[0:past_n_days] # (1,4)
+        # x_in = dset[0] # (1,4)
 
         # out_pred = []
         # sir_params_list = []
         # for i in range(num_days_iter):
-        #     if i==0:
-        #         x_in = dset[i:i+past_n_days]
-        #     else:
-        #         x_in = push_to_tensor_queue(x_in, pred_y)
         #     pred_y, sir_params = model2(x_in) #(4)
         #     pred_y = torch.unsqueeze(pred_y, 0)
+        #     x_in = pred_y
         #     out_pred.append(pred_y)
         #     sir_params_list.append(sir_params)
+        #     # x_in = pred_y
         # out_pred = torch.stack(out_pred)
 
+
+        # x_in = dset[0:past_n_days] # (7,4)
+
+        dset = torch.cat([ dataset[:].squeeze()]) # shape (5,1,4) ->(5,4)
+
+        out_pred = []
+        sir_params_list = []
+        for i in range(num_days_iter):
+            if i==0:
+                x_in = dset[i:i+past_n_days] # (7,4)
+                # x_in = torch.squeeze(x_in, 1)   # (7,1,4) -> (7,4)
+            else:
+                x_in = push_to_tensor_queue(x_in, torch.unsqueeze(pred_y, 0))
+            
+            # print('x_in.shape',x_in.shape)
+            pred_y, sir_params = model2(x_in) #(4)
+            # pred_y = torch.unsqueeze(pred_y, 0)
+            out_pred.append(pred_y)
+            sir_params_list.append(sir_params)
+        out_pred = torch.stack(out_pred)
+
+        # print('out_pred.shape',out_pred.shape) #[num_days_iter,4]
 
         # Predicted SIR params and values
         d_sir_params = {"beta":[],"gamma":[],"delta":[]}
@@ -106,19 +112,19 @@ def do_inference(
             d_sir_params["gamma"].append((np.abs(sir_params["gamma"])))
             d_sir_params["delta"].append((np.abs(sir_params["delta"])))
 
-            d_pred_sir_values["S"].append(out_pred[i][0][0].detach().numpy())
-            d_pred_sir_values["I"].append(out_pred[i][0][1].detach().numpy())
-            d_pred_sir_values["R"].append(out_pred[i][0][2].detach().numpy())
-            d_pred_sir_values["D"].append(out_pred[i][0][3].detach().numpy())
+            d_pred_sir_values["S"].append(out_pred[i][0].detach().numpy())
+            d_pred_sir_values["I"].append(out_pred[i][1].detach().numpy())
+            d_pred_sir_values["R"].append(out_pred[i][2].detach().numpy())
+            d_pred_sir_values["D"].append(out_pred[i][3].detach().numpy())
         v_x = [i for i in range(len(d_sir_params["beta"]))]
 
         # Ground truth SIR values
         d_gt_sir_values = {"S":[],"I":[],"R":[],"D":[]}
         for i in range(past_n_days,len(dset)) :
-            d_gt_sir_values["S"].append(dset[i][0][0].detach().numpy())
-            d_gt_sir_values["I"].append(dset[i][0][1].detach().numpy())
-            d_gt_sir_values["R"].append(dset[i][0][2].detach().numpy())
-            d_gt_sir_values["D"].append(dset[i][0][3].detach().numpy())       
+            d_gt_sir_values["S"].append(dset[i][0].detach().numpy())
+            d_gt_sir_values["I"].append(dset[i][1].detach().numpy())
+            d_gt_sir_values["R"].append(dset[i][2].detach().numpy())
+            d_gt_sir_values["D"].append(dset[i][3].detach().numpy())       
 
         # Plot SIR params 
         fig, ax = plt.subplots(3)
